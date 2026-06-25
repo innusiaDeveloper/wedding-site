@@ -28,13 +28,17 @@ export function MediaGalleryLightbox({
   }, [items, openIndex]);
 
   const prev = () => {
-    if (openIndex === null) return;
-    setOpenIndex((i) => (i === 0 ? items.length - 1 : i - 1));
+    setOpenIndex((i) => {
+      if (i === null) return null;
+      return i === 0 ? items.length - 1 : i - 1;
+    });
   };
 
   const next = () => {
-    if (openIndex === null) return;
-    setOpenIndex((i) => (i === items.length - 1 ? 0 : i + 1));
+    setOpenIndex((i) => {
+      if (i === null) return null;
+      return i === items.length - 1 ? 0 : i + 1;
+    });
   };
 
   useEffect(() => {
@@ -48,7 +52,6 @@ export function MediaGalleryLightbox({
 
     window.addEventListener("keydown", onKeyDown);
 
-    // Prevent background scroll while modal open
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -56,14 +59,12 @@ export function MediaGalleryLightbox({
       window.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = originalOverflow;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openIndex, items.length]);
 
   if (!hasItems) return null;
 
   return (
     <>
-      {/* GRID */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, idx) => (
           <button
@@ -73,7 +74,6 @@ export function MediaGalleryLightbox({
             className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-left"
             aria-label={`Open ${item.type.toLowerCase()}`}
           >
-            {/* Thumb */}
             {item.type === "Video" ? (
               <div className="relative aspect-4/5 w-full">
                 <video
@@ -102,7 +102,6 @@ export function MediaGalleryLightbox({
               </div>
             )}
 
-            {/* Hover overlay */}
             <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100">
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-black/0" />
             </div>
@@ -110,18 +109,15 @@ export function MediaGalleryLightbox({
         ))}
       </div>
 
-      {/* MODAL */}
       {openIndex !== null && current && (
         <div
           className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           onMouseDown={(e) => {
-            // Click outside closes
             if (e.target === e.currentTarget) close();
           }}
         >
-          {/* Top bar */}
           <div className="absolute left-0 right-0 top-0 flex items-center justify-between gap-3 p-4">
             <div className="text-xs text-white/70">
               {openIndex + 1} / {items.length}
@@ -136,22 +132,24 @@ export function MediaGalleryLightbox({
             </button>
           </div>
 
-          {/* Prev/Next */}
           <button
             type="button"
             onClick={prev}
             className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-white/90 hover:bg-white/10"
             aria-label="Previous"
-          ></button>
+          >
+            ‹
+          </button>
 
           <button
             type="button"
             onClick={next}
             className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-white/90 hover:bg-white/10"
             aria-label="Next"
-          ></button>
+          >
+            ›
+          </button>
 
-          {/* Content */}
           <div className="mx-auto grid h-full max-w-6xl place-items-center px-5 py-16">
             <div className="w-full overflow-hidden rounded-3xl border border-white/10 bg-black/40 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
               {current.type === "Video" ? (

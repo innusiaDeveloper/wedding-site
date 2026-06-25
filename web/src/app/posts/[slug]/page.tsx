@@ -24,28 +24,33 @@ export async function generateMetadata({
     };
   }
 
+  const title = post.title ?? "Публикация";
+  const postSlug = post.slug ?? slug;
+
   const description =
     post.caption?.replace(/\s+/g, " ").trim().slice(0, 160) ||
     "Публикация Александры Пирог";
 
+  const url = absoluteUrl(`/posts/${postSlug}`);
+
   return {
-    title: `${post.title} | Публикации`,
+    title: `${title} | Публикации`,
     description,
 
     alternates: {
-      canonical: absoluteUrl(`/posts/${post.slug}`),
+      canonical: url,
     },
 
     openGraph: {
       type: "article",
-      title: post.title,
+      title,
       description,
-      url: absoluteUrl(`/posts/${post.slug}`),
+      url,
     },
 
     twitter: {
       card: "summary_large_image",
-      title: post.title,
+      title,
       description,
     },
   };
