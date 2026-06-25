@@ -1,0 +1,35 @@
+# macOS
+.DS_Store
+
+# Node.js
+node_modules/
+**/node_modules/
+
+# Next.js
+.next/
+**/.next/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Directus backups
+*.dump
+*.sql
+*.backup
+
+# Logs
+*.log
+
+# Build
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+
+# Local Docker compose backups
+cms/docker-compose.backup.yml
+cms/docker-compose.old.yml

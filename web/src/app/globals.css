@@ -1,0 +1,84 @@
+@config "../../tailwind.config.ts";
+@import "tailwindcss";
+
+/* базовые мелочи */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-ui, Arial, sans-serif);
+}
+
+html.logo-spin-once #logo-o {
+  transform-origin: center;
+  animation: logoSpinOnce 300ms cubic-bezier(0.7, 0, 0.3, 1) 1 both;
+}
+
+@keyframes logoSpinOnce {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.06);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+/* ===== Premium reveal animation ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .slow-shimmer {
+    animation: none !important;
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: reveal 800ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.reveal.delay-1 {
+  animation-delay: 80ms;
+}
+.reveal.delay-2 {
+  animation-delay: 160ms;
+}
+.reveal.delay-3 {
+  animation-delay: 240ms;
+}
+
+@keyframes reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* subtle luxury shimmer */
+
+.slow-shimmer {
+  background-size: 180% 180%;
+  animation: shimmer 12s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

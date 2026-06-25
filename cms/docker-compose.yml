@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: wedding_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: directus_restore
+      POSTGRES_USER: import_user
+      POSTGRES_PASSWORD: Test123456
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  directus:
+    build: .
+    container_name: wedding_directus
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    ports:
+      - "8055:8055"
+
+volumes:
+  postgres_data:
