@@ -76,7 +76,7 @@ export async function getPostsWithMedia() {
 
   const res = await directusFetch<DirectusListResponse<Post[]>>(
     `/items/posts?${params.toString()}`,
-    { cache: "no-store" },
+    { next: { revalidate: 3600 } },
   );
 
   return (res.data ?? []).filter(isValidPost);
@@ -93,7 +93,7 @@ export async function getPostBySlugWithMedia(slug: string) {
 
   const res = await directusFetch<DirectusListResponse<Post[]>>(
     `/items/posts?${params.toString()}`,
-    { cache: "no-store" },
+    { next: { revalidate: 3600 } },
   );
 
   return res.data?.[0] ?? null;

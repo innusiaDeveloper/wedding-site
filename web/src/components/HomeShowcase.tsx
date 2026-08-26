@@ -24,7 +24,7 @@ function Mosaic({ items }: { items: Item[] }) {
   const b = items[1];
   const c = items[2];
 
-  const aUrl = a ? coverUrl(a.cover, 1200) : null;
+  const aUrl = a ? coverUrl(a.cover, 900) : null;
   const bUrl = b ? coverUrl(b.cover, 900) : null;
   const cUrl = c ? coverUrl(c.cover, 900) : null;
 

@@ -56,8 +56,8 @@ export default async function PortfolioPage() {
 
               const coverUrl = coverId
                 ? directusAssetUrl(coverId, {
-                    width: 1200,
-                    quality: 85,
+                    width: 900,
+                    quality: 76,
                     fit: "cover",
                   })
                 : null;
@@ -65,7 +65,7 @@ export default async function PortfolioPage() {
               return (
                 <Link
                   key={p.id}
-                  href={`/portfolio/${p.slug}`}
+                  href={`/portfolio/${encodeURIComponent(p.slug)}`}
                   className="
                     group mb-6 block break-inside-avoid overflow-hidden rounded-3xl
                     border border-brand-dark/10 bg-white

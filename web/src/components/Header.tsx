@@ -94,21 +94,19 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
               {logoDesktopUrl || logoMobileUrl ? (
                 <>
                   {logoMobileUrl ? (
-                    <div className="relative block h-16 w-28 overflow-visible md:hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <div className="relative block h-20 w-40 overflow-visible md:hidden">
                       <img
                         src={logoMobileUrl}
                         alt="ALEKSANDRA PIROG"
                         loading="eager"
                         draggable={false}
-                        className="h-full w-full scale-[1.06] object-contain object-left"
+                        className="h-full w-full scale-[1.18] object-contain object-left"
                       />
                     </div>
                   ) : null}
 
                   {logoDesktopUrl ? (
                     <div className="relative hidden h-20 w-[min(470px,calc(100vw-110px))] overflow-visible md:block md:h-24">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={logoDesktopUrl}
                         alt="ALEKSANDRA PIROG"
@@ -145,7 +143,7 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
                   font-ui text-[15px] font-medium
                   text-brand-paper shadow-sm
                   transition-all duration-300
-                 hover:bg-brand-hover
+                  hover:bg-brand-hover
                   focus:outline-none
                   focus-visible:ring-2
                   focus-visible:ring-brand-green/35
@@ -160,32 +158,33 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
                 aria-label={open ? "Закрыть меню" : "Открыть меню"}
                 aria-expanded={open}
                 onClick={() => setOpen((v) => !v)}
-                className={[
-                  "inline-flex shrink-0 items-center justify-center md:hidden",
-                  "rounded-2xl border px-3 py-2 transition-all duration-300",
-                  "border-brand-dark/20 bg-white text-brand-dark",
-                  "hover:border-brand-green/35 hover:scale-105",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/35",
-                  open ? "border-brand-green/35" : "",
-                ].join(" ")}
+                className="
+                  inline-flex md:hidden
+                  h-11 w-11
+                  shrink-0 items-center justify-center
+                  text-brand-dark
+                  transition-all duration-300
+                  hover:text-brand-hover
+                  focus:outline-none
+                "
               >
-                <span className="relative block h-5 w-5">
+                <span className="relative block h-6 w-7">
                   <span
                     className={[
-                      "absolute left-0 block h-[2px] w-5 bg-current transition-all duration-300",
-                      open ? "top-2.5 rotate-45" : "top-1",
+                      "absolute left-0 block h-[2.5px] w-7 bg-current transition-all duration-300",
+                      open ? "top-3 rotate-45" : "top-1",
                     ].join(" ")}
                   />
                   <span
                     className={[
-                      "absolute left-0 top-2.5 block h-[2px] w-5 bg-current transition-all duration-300",
+                      "absolute left-0 top-3 block h-[2.5px] w-7 bg-current transition-all duration-300",
                       open ? "scale-0 opacity-0" : "scale-100 opacity-100",
                     ].join(" ")}
                   />
                   <span
                     className={[
-                      "absolute left-0 block h-[2px] w-5 bg-current transition-all duration-300",
-                      open ? "top-2.5 -rotate-45" : "top-4",
+                      "absolute left-0 block h-[2.5px] w-7 bg-current transition-all duration-300",
+                      open ? "top-3 -rotate-45" : "top-5",
                     ].join(" ")}
                   />
                 </span>
@@ -196,13 +195,13 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
 
         <div
           className={[
-            "overflow-hidden border-b border-brand-dark/10 bg-brand-paper transition-all duration-500 ease-in-out md:hidden",
+            "border-b border-brand-dark/10 bg-brand-paper transition-all duration-300 ease-in-out md:hidden",
             open
-              ? "max-h-96 opacity-100"
-              : "max-h-0 border-transparent opacity-0",
+              ? "max-h-screen overflow-y-auto opacity-100"
+              : "pointer-events-none max-h-0 overflow-hidden border-transparent opacity-0",
           ].join(" ")}
         >
-          <div className="mx-auto max-w-6xl px-5 py-4">
+          <div className="mx-auto max-w-6xl px-8 pb-10 pt-6">
             <div className="flex flex-col gap-2">
               <NavLink href="/portfolio" onClick={() => setOpen(false)}>
                 Портфолио
@@ -220,24 +219,24 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
                 Контакты
               </NavLink>
 
-              <Link
-                href="/portfolio"
-                onClick={() => setOpen(false)}
-                className="
-                  mt-2 inline-flex items-center justify-center
-                  rounded-2xl bg-brand-green
-                  px-5 py-3
-                  font-ui text-[15px] font-medium
-                  text-brand-paper
-                  shadow-md shadow-brand-green/20
-                  transition-all duration-300
-                 hover:bg-brand-hover
-                  hover:scale-[1.02]
-                  hover:shadow-lg
-                "
-              >
-                Смотреть портфолио <span className="ml-2">→</span>
-              </Link>
+              <div className="sticky bottom-0 mt-8 bg-brand-paper pb-4 pt-3">
+                <Link
+                  href="/portfolio"
+                  onClick={() => setOpen(false)}
+                  className="
+      flex w-full items-center justify-center
+      rounded-2xl bg-brand-green
+      px-5 py-4
+      font-ui text-[16px] font-medium
+      text-brand-paper
+      shadow-md shadow-brand-green/20
+      transition-colors duration-300
+      hover:bg-brand-hover
+    "
+                >
+                  Смотреть портфолио <span className="ml-2">→</span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

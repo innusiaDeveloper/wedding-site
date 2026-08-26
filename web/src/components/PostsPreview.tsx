@@ -79,7 +79,7 @@ export function PostsPreview({
           const coverUrl = coverFileId
             ? directusAssetUrl(coverFileId, {
                 width: 900,
-                quality: 85,
+                quality: 78,
                 fit: "cover",
               })
             : null;

@@ -29,14 +29,39 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "ALEKSANDRA.PIROG.RU",
-  description: "Wedding",
+  metadataBase: new URL("https://aleksandra-pirog.ru"),
+
+  title: {
+    default: "Александра Пирог — организация свадеб",
+    template: "%s | Александра Пирог",
+  },
+
+  description:
+    "Организация свадеб под ключ, подбор площадки, координация, концепция и сопровождение свадебных мероприятий.",
+
+  alternates: {
+    canonical: "/",
+  },
+
+  openGraph: {
+    type: "website",
+    locale: "ru_RU",
+    url: "https://aleksandra-pirog.ru",
+    siteName: "Александра Пирог",
+    title: "Александра Пирог",
+    description:
+      "Организация свадеб под ключ, координация и свадебные проекты.",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 async function getSiteSettings(): Promise<SiteSettings | null> {
   const res = await directusFetch<{ data: SiteSettings }>(
     "/items/site_settings?fields=logo_desktop.id,logo_mobile.id,logo_footer.id",
-    { cache: "no-store" },
+    { next: { revalidate: 3600 } },
   );
 
   return res.data ?? null;
@@ -63,7 +88,7 @@ export default async function RootLayout({
     : null;
 
   return (
-    <html lang="en">
+    <html lang="ru">
       <body
         suppressHydrationWarning
         className={`${manrope.variable} bg-brand-paper text-brand-dark font-ui antialiased`}

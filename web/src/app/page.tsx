@@ -24,6 +24,16 @@ function clampText(text: string, max = 140) {
   return t.length > max ? t.slice(0, max).trim() + "…" : t;
 }
 
+function isVideoType(type?: string | null) {
+  const value = (type ?? "").toLowerCase();
+
+  return (
+    value.includes("video") ||
+    value.includes("видео") ||
+    value.includes("reels")
+  );
+}
+
 type ProjectPreview = {
   id: number;
   cover?: string | { id: string } | null;
@@ -49,8 +59,8 @@ async function getPortfolioTileFallback(): Promise<string | null> {
 
     return coverId
       ? directusAssetUrl(coverId, {
-          width: 1800,
-          quality: 85,
+          width: 900,
+          quality: 74,
           fit: "cover",
         })
       : null;
@@ -75,8 +85,8 @@ async function getVenuesTileFallback(): Promise<string | null> {
 
     return coverId
       ? directusAssetUrl(coverId, {
-          width: 1800,
-          quality: 85,
+          width: 900,
+          quality: 74,
           fit: "cover",
         })
       : null;
@@ -97,8 +107,8 @@ export default async function HomePage() {
 
   const heroImage = settings?.hero_image
     ? directusAssetUrl(settings.hero_image, {
-        width: 1400,
-        quality: 85,
+        width: 1100,
+        quality: 76,
         fit: "cover",
       })
     : null;
@@ -276,32 +286,20 @@ export default async function HomePage() {
 
               const cover = pickCover(post);
 
-              const imageFileId =
-                cover?.type === "video"
-                  ? ((typeof cover?.poster === "string"
-                      ? cover.poster
-                      : cover?.poster?.id) ?? null)
-                  : ((typeof cover?.file === "string"
-                      ? cover.file
-                      : cover?.file?.id) ?? null);
+              const imageFileId = isVideoType(cover?.type)
+                ? ((typeof cover?.poster === "string"
+                    ? cover.poster
+                    : cover?.poster?.id) ?? null)
+                : ((typeof cover?.file === "string"
+                    ? cover.file
+                    : cover?.file?.id) ?? null);
 
               const imageUrl = imageFileId
                 ? directusAssetUrl(imageFileId, {
                     width: 900,
-                    quality: 85,
+                    quality: 78,
                     fit: "cover",
                   })
-                : null;
-
-              const videoFileId =
-                cover?.type === "video"
-                  ? ((typeof cover?.file === "string"
-                      ? cover.file
-                      : cover?.file?.id) ?? null)
-                  : null;
-
-              const videoUrl = videoFileId
-                ? directusAssetUrl(videoFileId)
                 : null;
 
               return (
@@ -309,27 +307,16 @@ export default async function HomePage() {
                   key={post.id}
                   href={`/posts/${post.slug}`}
                   className="
-                    group block overflow-hidden rounded-[2.5rem]
-                    border border-brand-dark/10 bg-white
-                    shadow-[0_20px_60px_rgba(0,0,0,0.06)]
-                    transition-all duration-500
-                    hover:-translate-y-1
-                    hover:shadow-[0_28px_90px_rgba(0,0,0,0.12)]
-                  "
+        group block overflow-hidden rounded-[2.5rem]
+        border border-brand-dark/10 bg-white
+        shadow-[0_20px_60px_rgba(0,0,0,0.06)]
+        transition-all duration-500
+        hover:-translate-y-1
+        hover:shadow-[0_28px_90px_rgba(0,0,0,0.12)]
+      "
                 >
                   <div className="relative aspect-[4/5] overflow-hidden bg-brand-olive/10">
-                    {cover?.type === "video" && videoUrl ? (
-                      <video
-                        src={videoUrl}
-                        poster={imageUrl ?? undefined}
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="metadata"
-                        className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.02]"
-                      />
-                    ) : imageUrl ? (
+                    {imageUrl ? (
                       <Image
                         src={imageUrl}
                         alt={post.title ?? ""}
@@ -351,7 +338,7 @@ export default async function HomePage() {
                       </div>
                     )}
 
-                    {cover?.type === "video" && (
+                    {isVideoType(cover?.type) && (
                       <div className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-black/50 px-3 py-1.5 font-ui text-xs text-white backdrop-blur">
                         <span className="h-2 w-2 rounded-full bg-white/80" />
                         Reels

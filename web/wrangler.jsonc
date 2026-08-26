@@ -8,4 +8,8 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS",
   },
+  "vars": {
+    "NEXT_PUBLIC_DIRECTUS_URL": "https://cms.aleksandra-pirog.ru",
+    "NEXT_PUBLIC_SITE_URL": "https://aleksandra-pirog.ru",
+  },
 }

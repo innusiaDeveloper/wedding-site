@@ -127,11 +127,21 @@ export function Footer({ logoUrl }: Props) {
               </div>
 
               <div>ИНН: 232309553312</div>
-              <div>ОГРН: 322237500319194</div>
+              <div>ОГРНИП: 322237500319194</div>
             </div>
 
             <p className="mt-6 font-ui text-xs text-brand-brown/80">
               © {year} Александра Пирог. Все права защищены.
+            </p>
+
+            <p className="mt-2 font-ui text-xs text-brand-brown/55">
+              Designed &amp; Developed by{" "}
+              <a
+                href="mailto:inna.koimchidu@gmail.com"
+                className="font-semibold text-brand-dark transition duration-300 hover:text-brand-green"
+              >
+                InnWeb
+              </a>
             </p>
           </div>
         </div>

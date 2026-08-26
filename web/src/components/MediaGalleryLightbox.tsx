@@ -20,8 +20,6 @@ export function MediaGalleryLightbox({
   const open = (index: number) => setOpenIndex(index);
   const close = () => setOpenIndex(null);
 
-  const hasItems = items.length > 0;
-
   const current = useMemo(() => {
     if (openIndex === null) return null;
     return items[openIndex] ?? null;
@@ -59,9 +57,9 @@ export function MediaGalleryLightbox({
       window.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = originalOverflow;
     };
-  }, [openIndex, items.length]);
+  }, [openIndex]);
 
-  if (!hasItems) return null;
+  if (!items.length) return null;
 
   return (
     <>
@@ -75,35 +73,30 @@ export function MediaGalleryLightbox({
             aria-label={`Open ${item.type.toLowerCase()}`}
           >
             {item.type === "Video" ? (
-              <div className="relative aspect-4/5 w-full">
-                <video
-                  src={item.src}
-                  className="h-full w-full object-cover"
-                  preload="metadata"
-                  muted
-                  playsInline
-                />
-                <div className="pointer-events-none absolute inset-0 grid place-items-center">
-                  <span className="grid h-12 w-12 place-items-center rounded-full bg-black/60 ring-1 ring-white/20 backdrop-blur">
+              <div className="relative aspect-[4/5] w-full bg-black">
+                <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 to-neutral-700" />
+
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur text-2xl text-white">
                     ▶
-                  </span>
+                  </div>
                 </div>
               </div>
             ) : (
-              <div className="relative aspect-4/5 w-full">
+              <div className="relative aspect-[4/5] w-full">
                 <Image
                   src={item.src}
                   alt={item.alt ?? ""}
                   fill
                   unoptimized
+                  sizes="(max-width:768px)100vw,(max-width:1200px)50vw,33vw"
                   className="object-cover transition duration-300 group-hover:scale-[1.02]"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
             )}
 
             <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-black/0" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
             </div>
           </button>
         ))}
@@ -118,46 +111,42 @@ export function MediaGalleryLightbox({
             if (e.target === e.currentTarget) close();
           }}
         >
-          <div className="absolute left-0 right-0 top-0 flex items-center justify-between gap-3 p-4">
+          <div className="absolute left-0 right-0 top-0 flex items-center justify-between p-4">
             <div className="text-xs text-white/70">
               {openIndex + 1} / {items.length}
             </div>
 
             <button
-              type="button"
               onClick={close}
-              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/90 hover:bg-white/10"
+              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white hover:bg-white/10"
             >
               Close
             </button>
           </div>
 
           <button
-            type="button"
             onClick={prev}
-            className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-white/90 hover:bg-white/10"
-            aria-label="Previous"
+            className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 px-3 py-2 text-white hover:bg-white/20"
           >
             ‹
           </button>
 
           <button
-            type="button"
             onClick={next}
-            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-white/90 hover:bg-white/10"
-            aria-label="Next"
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 px-3 py-2 text-white hover:bg-white/20"
           >
             ›
           </button>
 
           <div className="mx-auto grid h-full max-w-6xl place-items-center px-5 py-16">
-            <div className="w-full overflow-hidden rounded-3xl border border-white/10 bg-black/40 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+            <div className="w-full overflow-hidden rounded-3xl border border-white/10 bg-black shadow-[0_20px_60px_rgba(0,0,0,.6)]">
               {current.type === "Video" ? (
                 <video
                   src={current.src}
                   controls
-                  preload="metadata"
                   playsInline
+                  preload="metadata"
+                  controlsList="nodownload"
                   className="max-h-[80vh] w-full bg-black"
                 />
               ) : (
@@ -167,9 +156,9 @@ export function MediaGalleryLightbox({
                     alt={current.alt ?? ""}
                     fill
                     unoptimized
-                    className="object-contain"
-                    sizes="100vw"
                     priority
+                    sizes="100vw"
+                    className="object-contain"
                   />
                 </div>
               )}

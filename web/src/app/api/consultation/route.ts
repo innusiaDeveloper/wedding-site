@@ -1,88 +1,119 @@
 import { NextResponse } from "next/server";
+import { sendMaxMessage } from "@/lib/max";
 
 type ConsultationPayload = {
-  firstName?: string;
-  lastName?: string;
+  name?: string;
   phone?: string;
   preferredDate?: string;
+  personalDataConsent?: boolean;
 };
 
-function esc(s: string) {
-  return s.replace(
+function escapeHtml(value: string) {
+  return value.replace(
     /[<>&]/g,
-    (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[c]!,
+    (character) =>
+      (
+        ({
+          "<": "&lt;",
+          ">": "&gt;",
+          "&": "&amp;",
+        }) as Record<string, string>
+      )[character],
   );
 }
 
-export async function POST(req: Request) {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-
-  if (!token || !chatId) {
-    return NextResponse.json(
-      { ok: false, error: "Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID" },
-      { status: 500 },
-    );
-  }
-
+export async function POST(request: Request) {
   let data: ConsultationPayload;
+
   try {
-    data = (await req.json()) as ConsultationPayload;
+    data = (await request.json()) as ConsultationPayload;
   } catch {
     return NextResponse.json(
-      { ok: false, error: "Invalid JSON" },
-      { status: 400 },
+      {
+        ok: false,
+        error: "Invalid JSON",
+      },
+      {
+        status: 400,
+      },
     );
   }
 
-  const firstName = data.firstName?.trim() || "";
-  const lastName = data.lastName?.trim() || "";
-  const phone = data.phone?.trim() || "";
-  const preferredDate = data.preferredDate?.trim() || "";
+  const name = data.name?.trim() ?? "";
+  const phone = data.phone?.trim() ?? "";
+  const preferredDate = data.preferredDate?.trim() ?? "";
+
+  if (data.personalDataConsent !== true) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Personal data consent is required",
+      },
+      {
+        status: 400,
+      },
+    );
+  }
 
   if (
-    firstName.length < 2 ||
-    lastName.length < 2 ||
+    name.length < 2 ||
     phone.replace(/\D/g, "").length < 10 ||
     preferredDate.length === 0
   ) {
     return NextResponse.json(
-      { ok: false, error: "Invalid fields" },
-      { status: 400 },
+      {
+        ok: false,
+        error: "Invalid fields",
+      },
+      {
+        status: 400,
+      },
     );
   }
 
-  const lines = [
+  const message = [
     "📞 <b>Новая заявка: Бесплатная консультация</b>",
     "",
-    `👤 <b>Имя:</b> ${esc(firstName)}`,
-    `👤 <b>Фамилия:</b> ${esc(lastName)}`,
-    `📞 <b>Телефон:</b> ${esc(phone)}`,
-    `📅 <b>Желаемая дата:</b> ${esc(preferredDate)}`,
+    `👤 <b>Имя:</b> ${escapeHtml(name)}`,
+    `📞 <b>Телефон:</b> ${escapeHtml(phone)}`,
+    `📅 <b>Желаемая дата:</b> ${escapeHtml(preferredDate)}`,
+    "",
+    "✅ <b>Согласие на обработку персональных данных:</b> получено",
   ].join("\n");
 
-  const resp = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text: lines,
-      parse_mode: "HTML",
-      disable_web_page_preview: true,
-    }),
-  });
+  try {
+    const result = await sendMaxMessage(message);
 
-  const json = await resp.json().catch(() => null);
+    console.log("CONSULTATION MAX STATUS:", result.status);
 
-  console.log("CONSULTATION TELEGRAM STATUS:", resp.status);
-  console.log("CONSULTATION TELEGRAM RESPONSE:", json);
+    if (!result.ok) {
+      console.error("CONSULTATION MAX ERROR:", result.data);
 
-  if (!resp.ok || !json?.ok) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "MAX sendMessage failed",
+        },
+        {
+          status: 502,
+        },
+      );
+    }
+
+    return NextResponse.json({
+      ok: true,
+    });
+  } catch (error) {
+    console.error("CONSULTATION REQUEST ERROR:", error);
+
     return NextResponse.json(
-      { ok: false, error: "Telegram sendMessage failed", details: json },
-      { status: 500 },
+      {
+        ok: false,
+        error: "Unable to send consultation request",
+      },
+      {
+        status: 500,
+      },
     );
   }
-
-  return NextResponse.json({ ok: true });
 }

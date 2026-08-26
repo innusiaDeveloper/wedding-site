@@ -45,10 +45,10 @@ export function Hero({
                   <>
                     <DirectusImage
                       src={imageUrl}
-                      alt=""
+                      alt={title}
                       fill
                       priority
-                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      sizes="(max-width: 640px) 92vw, (max-width: 1024px) 90vw, 560px"
                       className="object-cover"
                       style={{ objectPosition: "50% 20%" }}
                     />
@@ -96,12 +96,6 @@ export function Hero({
                 {title}
               </h1>
 
-              {subtitle ? (
-                <p className="mt-5 font-ui text-base leading-[1.75] text-brand-brown/90 sm:text-lg">
-                  {subtitle}
-                </p>
-              ) : null}
-
               <div className="mt-8 flex flex-wrap items-center gap-4 reveal delay-3">
                 <Link
                   href={ctaHref}
@@ -118,6 +112,15 @@ export function Hero({
                 </Link>
               </div>
 
+              {subtitle ? (
+                <p className="mt-5 font-ui text-base leading-[1.75] text-brand-brown/90 sm:text-lg">
+                  {subtitle}
+                </p>
+              ) : null}
+
+              <p className="mt-4 max-w-xl font-ui text-sm leading-[1.7] text-brand-brown/70 sm:text-base">
+                ● Москва • МО • Краснодар • КК • Россия
+              </p>
               <div className="mt-9 h-px w-16 bg-brand-green/30" />
 
               <p className="mt-5 font-ui text-xs tracking-[0.14em] text-brand-brown/55">

@@ -54,6 +54,8 @@ function getGalleryFile(
 }
 
 async function getProjectBySlug(slug: string): Promise<Project | null> {
+  const normalized = normalizeSlug(slug);
+
   const url =
     `/items/projects?fields=` +
     `id,title,slug,excerpt,content,cover.id,` +
@@ -61,17 +63,15 @@ async function getProjectBySlug(slug: string): Promise<Project | null> {
     `gallery.directus_files_id.id,` +
     `gallery.directus_files_id.title,` +
     `gallery.directus_files_id.type` +
-    `&filter[status][_eq]=published`;
+    `&filter[status][_eq]=published` +
+    `&filter[slug][_eq]=${encodeURIComponent(normalized)}` +
+    `&limit=1`;
 
   const res = await directusFetch<{ data: Project[] }>(url, {
-    cache: "no-store",
+    next: { revalidate: 3600 },
   });
 
-  const normalized = normalizeSlug(slug);
-
-  return (
-    res.data?.find((item) => normalizeSlug(item.slug) === normalized) ?? null
-  );
+  return res.data?.[0] ?? null;
 }
 
 export async function generateMetadata({
@@ -140,8 +140,8 @@ export default async function ProjectPage({
 
   const coverUrl = coverId
     ? directusAssetUrl(coverId, {
-        width: 2200,
-        quality: 85,
+        width: 700,
+        quality: 72,
         fit: "cover",
       })
     : null;
@@ -161,7 +161,13 @@ export default async function ProjectPage({
 
         return {
           id: file.id,
-          src: directusAssetUrl(file.id),
+          src: isVideo
+            ? directusAssetUrl(file.id)
+            : directusAssetUrl(file.id, {
+                width: 900,
+                quality: 76,
+                fit: "cover",
+              }),
           alt: file.title ?? project.title,
           type: isVideo ? "video" : "image",
           poster: null,

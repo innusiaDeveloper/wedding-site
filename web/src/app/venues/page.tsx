@@ -25,7 +25,8 @@ export default async function VenuesPage() {
 
   try {
     const res = await directusFetch<{ data: VenueRow[] }>(
-      `/items/venues?fields=id,title,slug,excerpt,location,capacity,cover.id,gallery.directus_files_id.id,gallery.directus_files_id.title&filter[status][_eq]=published&sort=title`,
+      `/items/venues?fields=id,title,slug,excerpt,location,capacity,cover.id&filter[status][_eq]=published&sort=title`,
+      { next: { revalidate: 3600 } },
     );
     venues = res.data ?? [];
   } catch {

@@ -1,104 +1,170 @@
 import { NextResponse } from "next/server";
+import { sendMaxMessage } from "@/lib/max";
 
-type Payload = {
+type BudgetPayload = {
   name?: string;
   phone?: string;
   date?: string;
-  guests?: number | string;
+  guests?: string | number;
   city?: string;
-  promo?: string | null;
+  registryOffice?: string | null;
 
-  // из калькулятора
-  format?: "classic" | "chamber" | "luxury" | string;
-  venue?: "restaurant" | "country" | "loft" | "openair" | string;
-  decor?: "minimal" | "medium" | "wow" | string;
-  photoVideo?: "photo" | "photo_video" | "cinema" | string;
+  format?: "classic" | "chamber" | "luxury";
+  venue?: "restaurant" | "country" | "loft" | "openair";
 
-  estimate_min?: number;
-  estimate_max?: number;
+  personalDataConsent?: boolean;
 };
 
-function esc(s: string) {
-  return s.replace(
+function escapeHtml(value: string) {
+  return value.replace(
     /[<>&]/g,
-    (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[c]!,
+    (character) =>
+      (
+        ({
+          "<": "&lt;",
+          ">": "&gt;",
+          "&": "&amp;",
+        }) as Record<string, string>
+      )[character],
   );
 }
 
-function formatRub(n: number) {
-  return new Intl.NumberFormat("ru-RU").format(n) + " ₽";
+function formatWeddingType(type?: string) {
+  switch (type) {
+    case "classic":
+      return "Классическая";
+    case "chamber":
+      return "Камерная";
+    case "luxury":
+      return "Премиальная";
+    default:
+      return "—";
+  }
 }
 
-export async function POST(req: Request) {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-
-  if (!token || !chatId) {
-    return NextResponse.json(
-      { ok: false, error: "Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID" },
-      { status: 500 },
-    );
+function formatVenue(type?: string) {
+  switch (type) {
+    case "restaurant":
+      return "Ресторан";
+    case "country":
+      return "Загородная площадка";
+    case "loft":
+      return "Лофт";
+    case "openair":
+      return "Открытая площадка";
+    default:
+      return "—";
   }
+}
 
-  let data: Payload;
+export async function POST(request: Request) {
+  let data: BudgetPayload;
+
   try {
-    data = (await req.json()) as Payload;
+    data = (await request.json()) as BudgetPayload;
   } catch {
     return NextResponse.json(
-      { ok: false, error: "Invalid JSON" },
-      { status: 400 },
+      {
+        ok: false,
+        error: "Invalid JSON",
+      },
+      {
+        status: 400,
+      },
     );
   }
 
-  const lines = [
-    "💍 <b>Новая заявка: Расчёт бюджета</b>",
+  if (data.personalDataConsent !== true) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Personal data consent is required",
+      },
+      {
+        status: 400,
+      },
+    );
+  }
+
+  const name = data.name?.trim() ?? "";
+  const phone = data.phone?.trim() ?? "";
+  const date = data.date?.trim() ?? "";
+  const city = data.city?.trim() ?? "";
+  const registryOffice = data.registryOffice?.trim() ?? "";
+  const guests = String(data.guests ?? "").trim();
+
+  if (
+    name.length < 2 ||
+    phone.replace(/\D/g, "").length < 10 ||
+    city.length < 2 ||
+    date.length === 0 ||
+    guests.length === 0
+  ) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Invalid fields",
+      },
+      {
+        status: 400,
+      },
+    );
+  }
+
+  const message = [
+    "💍 <b>Новая заявка: Расчёт свадьбы</b>",
     "",
-    `👤 <b>Имя:</b> ${esc(data.name?.trim() || "—")}`,
-    `📞 <b>Телефон:</b> ${esc(data.phone?.trim() || "—")}`,
-    `📅 <b>Дата:</b> ${esc(data.date?.trim() || "—")}`,
-    `👥 <b>Гостей:</b> ${esc(String(data.guests ?? "—"))}`,
-    `📍 <b>Город:</b> ${esc(data.city?.trim() || "—")}`,
-    data.promo?.trim() ? `🏷 <b>Промокод:</b> ${esc(data.promo.trim())}` : null,
+    `👤 <b>Имя:</b> ${escapeHtml(name)}`,
+    `📞 <b>Телефон:</b> ${escapeHtml(phone)}`,
+    `📅 <b>Дата свадьбы:</b> ${escapeHtml(date)}`,
+    `👥 <b>Количество гостей:</b> ${escapeHtml(guests)}`,
+    `📍 <b>Город:</b> ${escapeHtml(city)}`,
+
+    registryOffice ? `🏛 <b>ЗАГС:</b> ${escapeHtml(registryOffice)}` : null,
 
     "",
-    "<b>Параметры:</b>",
-    data.format ? `• Формат: ${esc(String(data.format))}` : null,
-    data.venue ? `• Площадка: ${esc(String(data.venue))}` : null,
-    data.decor ? `• Декор: ${esc(String(data.decor))}` : null,
-    data.photoVideo ? `• Фото / Видео: ${esc(String(data.photoVideo))}` : null,
-
+    "<b>Параметры мероприятия</b>",
+    `• Формат: ${formatWeddingType(data.format)}`,
+    `• Площадка: ${formatVenue(data.venue)}`,
     "",
-    typeof data.estimate_min === "number" &&
-    typeof data.estimate_max === "number"
-      ? `💰 <b>Оценка бюджета:</b> ${formatRub(
-          data.estimate_min,
-        )} – ${formatRub(data.estimate_max)}`
-      : null,
+    "✅ <b>Согласие на обработку персональных данных:</b> получено",
   ]
-    .filter(Boolean)
+    .filter((line): line is string => Boolean(line))
     .join("\n");
 
-  const resp = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text: lines,
-      parse_mode: "HTML",
-      disable_web_page_preview: true,
-    }),
-  });
+  try {
+    const result = await sendMaxMessage(message);
 
-  const json = await resp.json().catch(() => null);
-  console.log("BUDGET TELEGRAM STATUS:", resp.status);
-  console.log("BUDGET TELEGRAM RESPONSE:", json);
+    console.log("BUDGET MAX STATUS:", result.status);
 
-  if (!resp.ok || !json?.ok) {
+    if (!result.ok) {
+      console.error("BUDGET MAX ERROR:", result.data);
+
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "MAX sendMessage failed",
+        },
+        {
+          status: 502,
+        },
+      );
+    }
+
+    return NextResponse.json({
+      ok: true,
+    });
+  } catch (error) {
+    console.error("BUDGET REQUEST ERROR:", error);
+
     return NextResponse.json(
-      { ok: false, error: "Telegram sendMessage failed", details: json },
-      { status: 500 },
+      {
+        ok: false,
+        error: "Unable to send budget request",
+      },
+      {
+        status: 500,
+      },
     );
   }
-
-  return NextResponse.json({ ok: true });
 }

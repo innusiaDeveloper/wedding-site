@@ -74,7 +74,7 @@ async function getVenueBySlug(slug: string): Promise<Venue | null> {
       `,halls.gallery.directus_files_id.id,halls.gallery.directus_files_id.title` +
       `&filter[status][_eq]=published` +
       `&sort=halls.sort,halls.title`,
-    { cache: "no-store" },
+    { next: { revalidate: 3600 } },
   );
 
   const normalized = normalizeSlug(slug);
@@ -148,8 +148,8 @@ export default async function VenuePage({
 
   const coverUrl = venueCoverId
     ? directusAssetUrl(venueCoverId, {
-        width: 2400,
-        quality: 85,
+        width: 700,
+        quality: 72,
         fit: "cover",
       })
     : null;
@@ -162,8 +162,8 @@ export default async function VenuePage({
       return [
         {
           id: directusAssetUrl(id, {
-            width: 2000,
-            quality: 85,
+            width: 900,
+            quality: 76,
             fit: "cover",
           }),
           alt: fileTitle(g.directus_files_id) ?? venue.title,
@@ -181,8 +181,8 @@ export default async function VenuePage({
 
     const hallCoverUrl = hallCoverId
       ? directusAssetUrl(hallCoverId, {
-          width: 2000,
-          quality: 85,
+          width: 900,
+          quality: 76,
           fit: "cover",
         })
       : null;
@@ -195,8 +195,8 @@ export default async function VenuePage({
         return [
           {
             id: directusAssetUrl(id, {
-              width: 2000,
-              quality: 85,
+              width: 900,
+              quality: 76,
               fit: "cover",
             }),
             alt: fileTitle(g.directus_files_id) ?? h.title ?? venue.title,

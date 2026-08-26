@@ -62,8 +62,8 @@ export function FeaturedProjects({
 
           const imgSrc = coverId
             ? directusAssetUrl(coverId, {
-                width: 1600,
-                quality: 85,
+                width: 1000,
+                quality: 78,
                 fit: "cover",
               })
             : null;

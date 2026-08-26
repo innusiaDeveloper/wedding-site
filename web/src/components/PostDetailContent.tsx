@@ -18,6 +18,16 @@ function sortMedia(media: PostMedia[]) {
   return [...media].sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
 }
 
+function isVideoType(type?: string | null) {
+  const value = (type ?? "").toLowerCase();
+
+  return (
+    value.includes("video") ||
+    value.includes("видео") ||
+    value.includes("reels")
+  );
+}
+
 export function PostDetailContent({
   post,
   compact = false,
@@ -44,18 +54,17 @@ export function PostDetailContent({
           fileUrl: directusAssetUrl(fileId),
           posterUrl: posterId
             ? directusAssetUrl(posterId, {
-                width: 1400,
-                quality: 85,
+                width: 900,
+                quality: 78,
                 fit: "cover",
               })
             : undefined,
         };
       })
-      .filter((slide): slide is Slide => Boolean(slide));
+      .filter((slide): slide is Slide => slide !== null);
   }, [media]);
 
   const [activeIndex, setActiveIndex] = useState(0);
-
   const active = slides[activeIndex] ?? null;
 
   const goPrev = () => {
@@ -66,8 +75,6 @@ export function PostDetailContent({
     setActiveIndex((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   };
 
-  const isVideo = (type: string) => type.startsWith("video");
-
   if (compact) {
     return (
       <div className="grid h-full grid-cols-1 md:grid-cols-[minmax(0,1fr)_380px]">
@@ -75,27 +82,29 @@ export function PostDetailContent({
           {active ? (
             <>
               <div className="relative h-full w-full">
-                {isVideo(active.type) ? (
+                {isVideoType(active.type) ? (
                   <video
                     key={active.id}
-                    src={active.fileUrl}
                     poster={active.posterUrl}
                     controls
                     playsInline
-                    className="h-full w-full object-contain bg-black"
-                  />
+                    preload="none"
+                    className="h-full w-full bg-black object-contain"
+                  >
+                    <source src={active.fileUrl} type="video/mp4" />
+                  </video>
                 ) : (
                   <Image
                     src={active.fileUrl}
                     alt={post.title ?? ""}
                     fill
                     unoptimized
-                    className="object-contain bg-black"
+                    className="bg-black object-contain"
                   />
                 )}
               </div>
 
-              {slides.length > 1 && (
+              {slides.length > 1 ? (
                 <>
                   <button
                     type="button"
@@ -115,7 +124,7 @@ export function PostDetailContent({
                     →
                   </button>
                 </>
-              )}
+              ) : null}
             </>
           ) : (
             <div className="font-ui text-sm text-white/70">Нет медиа</div>
@@ -138,7 +147,7 @@ export function PostDetailContent({
               </p>
             )}
 
-            {slides.length > 1 && (
+            {slides.length > 1 ? (
               <div className="mt-6">
                 <div className="mb-3 font-ui text-xs uppercase tracking-[0.16em] text-brand-olive">
                   Галерея
@@ -157,7 +166,7 @@ export function PostDetailContent({
                           : "border-brand-dark/10",
                       ].join(" ")}
                     >
-                      {isVideo(slide.type) ? (
+                      {isVideoType(slide.type) ? (
                         slide.posterUrl ? (
                           <Image
                             src={slide.posterUrl}
@@ -180,11 +189,17 @@ export function PostDetailContent({
                           className="object-cover"
                         />
                       )}
+
+                      {isVideoType(slide.type) ? (
+                        <span className="absolute inset-0 grid place-items-center text-white">
+                          ▶
+                        </span>
+                      ) : null}
                     </button>
                   ))}
                 </div>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
@@ -198,16 +213,16 @@ export function PostDetailContent({
           <div>
             <h1 className="font-display text-4xl sm:text-5xl">{post.title}</h1>
 
-            {post.caption && (
+            {post.caption ? (
               <p className="mt-4 max-w-3xl whitespace-pre-line font-ui text-sm leading-relaxed text-brand-brown">
                 {post.caption}
               </p>
-            )}
+            ) : null}
           </div>
 
           <Link
             href="/posts"
-            className="hidden sm:inline-flex items-center justify-center rounded-2xl border border-brand-dark/20 bg-brand-paper px-6 py-3 font-ui text-sm font-medium text-brand-dark transition hover:border-brand-green/40 hover:text-brand-deep"
+            className="hidden items-center justify-center rounded-2xl border border-brand-dark/20 bg-brand-paper px-6 py-3 font-ui text-sm font-medium text-brand-dark transition hover:border-brand-green/40 hover:text-brand-deep sm:inline-flex"
           >
             Все публикации
           </Link>
@@ -222,15 +237,17 @@ export function PostDetailContent({
         ) : (
           <div className="grid gap-8 sm:grid-cols-2">
             {slides.map((slide) =>
-              isVideo(slide.type) ? (
+              isVideoType(slide.type) ? (
                 <video
                   key={slide.id}
-                  src={slide.fileUrl}
                   poster={slide.posterUrl}
                   controls
                   playsInline
+                  preload="none"
                   className="aspect-[9/16] w-full rounded-[2rem] bg-black object-cover"
-                />
+                >
+                  <source src={slide.fileUrl} type="video/mp4" />
+                </video>
               ) : (
                 <div
                   key={slide.id}
