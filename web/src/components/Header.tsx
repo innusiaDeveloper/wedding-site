@@ -53,7 +53,7 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
 
   useEffect(() => {
     function onResize() {
-      if (window.innerWidth >= 768) setOpen(false);
+      if (window.innerWidth >= 1024) setOpen(false);
     }
 
     function onScroll() {
@@ -70,7 +70,7 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
     };
   }, []);
 
-  const headerHeightCls = "h-24 md:h-28";
+  const headerHeightCls = "h-24 lg:h-28";
 
   return (
     <>
@@ -93,7 +93,10 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
           ].join(" ")}
         />
 
-        <div className={`relative mx-auto max-w-6xl px-5 ${headerHeightCls}`}>
+        <div
+          className={`relative mx-auto max-w-[1440px] px-5 lg:px-8 ${headerHeightCls}`}
+        >
+          {" "}
           <div className="flex h-full items-center justify-between gap-3">
             <Link
               href="/"
@@ -103,20 +106,21 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
             >
               {logoDesktopUrl || logoMobileUrl ? (
                 <>
-                  {logoMobileUrl ? (
-                    <div className="relative block h-20 w-40 overflow-visible md:hidden">
+                  {logoMobileUrl || logoDesktopUrl ? (
+                    <div className="relative block h-20 w-40 overflow-visible lg:hidden">
                       <img
-                        src={logoMobileUrl}
+                        src={logoMobileUrl ?? logoDesktopUrl ?? ""}
                         alt="ALEKSANDRA PIROG"
                         loading="eager"
                         draggable={false}
-                        className="h-full w-full scale-[1.18] object-contain object-left"
+                        className="h-full w-full scale-[1.12] object-contain object-left"
                       />
                     </div>
                   ) : null}
 
                   {logoDesktopUrl ? (
-                    <div className="relative hidden h-20 w-[min(470px,calc(100vw-110px))] overflow-visible md:block md:h-24">
+                    <div className="relative hidden h-20 w-[clamp(300px,32vw,430px)] overflow-visible lg:block lg:h-24">
+                      {" "}
                       <img
                         src={logoDesktopUrl}
                         alt="ALEKSANDRA PIROG"
@@ -137,7 +141,8 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
               )}
             </Link>
 
-            <nav className="hidden items-center gap-2 md:flex">
+            <nav className="hidden items-center gap-1 lg:flex xl:gap-2">
+              {" "}
               <NavLink href="/portfolio">Портфолио</NavLink>
               <NavLink href="/venues">Площадки</NavLink>
               <NavLink href="/posts">Публикации</NavLink>
@@ -159,8 +164,7 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
       focus:outline-none
       focus-visible:ring-2
       focus-visible:ring-brand-green/35
-      md:inline-flex
-    "
+lg:inline-flex    "
                 >
                   Бесплатная консультация <span className="ml-2">→</span>
                 </button>
@@ -190,7 +194,7 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
                 aria-expanded={open}
                 onClick={() => setOpen((v) => !v)}
                 className="
-                  inline-flex md:hidden
+                  inline-flex lg:hidden
                   h-11 w-11
                   shrink-0 items-center justify-center
                   text-brand-dark
@@ -226,7 +230,7 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
 
         <div
           className={[
-            "border-b border-brand-dark/10 bg-brand-paper transition-all duration-300 ease-in-out md:hidden",
+            "border-b border-brand-dark/10 bg-brand-paper transition-all duration-300 ease-in-out lg:hidden",
             open
               ? "max-h-screen overflow-y-auto opacity-100"
               : "pointer-events-none max-h-0 overflow-hidden border-transparent opacity-0",
