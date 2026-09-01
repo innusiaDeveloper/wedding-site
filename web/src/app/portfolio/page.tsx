@@ -5,6 +5,11 @@ import Image from "next/image";
 import { directusFetch } from "@/lib/directus";
 import { directusAssetUrl } from "@/lib/seo";
 
+import {
+  PortfolioConsultationCTA,
+  PortfolioConsultationBottomCTA,
+} from "@/components/PortfolioConsultationCTA";
+
 export const metadata: Metadata = {
   title: "Портфолио | ALEKSANDRA.PIROG.RU",
   description: "Реальные проекты, атмосфера, детали и визуальные истории.",
@@ -28,14 +33,21 @@ export default async function PortfolioPage() {
   return (
     <main className="min-h-screen bg-brand-paper text-brand-dark">
       <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20 lg:py-24">
-        <header className="mb-10">
-          <h1 className="font-display font-light text-4xl leading-[0.98] tracking-[-0.02em] text-brand-dark sm:text-5xl lg:text-6xl">
-            Портфолио
-          </h1>
-          <p className="mt-4 max-w-2xl font-ui text-base leading-[1.75] text-brand-brown/85">
-            Реальные проекты, атмосфера, детали и визуальные истории.
-          </p>
-        </header>
+        <header className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+  <div>
+    <h1 className="font-display font-light text-4xl leading-[0.98] tracking-[-0.02em] text-brand-dark sm:text-5xl lg:text-6xl">
+      Портфолио
+    </h1>
+
+    <p className="mt-4 max-w-2xl font-ui text-base leading-[1.75] text-brand-brown/85">
+      Реальные проекты, атмосфера, детали и визуальные истории.
+    </p>
+  </div>
+
+  <div className="shrink-0">
+    <PortfolioConsultationCTA />
+  </div>
+</header>
 
         {projects.length === 0 ? (
           <div className="rounded-[2rem] border border-brand-dark/10 bg-white p-8 text-center shadow-[0_12px_36px_rgba(0,0,0,0.06)]">
@@ -116,6 +128,7 @@ export default async function PortfolioPage() {
             })}
           </div>
         )}
+        <PortfolioConsultationBottomCTA />
       </div>
     </main>
   );
