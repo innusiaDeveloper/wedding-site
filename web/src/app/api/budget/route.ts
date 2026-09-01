@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sendMaxMessage } from "@/lib/max";
+import { createLead } from "@/lib/leads";
 
 type BudgetPayload = {
   name?: string;
@@ -133,6 +134,19 @@ export async function POST(request: Request) {
     .join("\n");
 
   try {
+    await createLead({
+      leadType: "budget",
+      name,
+      phone,
+      eventDate: date,
+      guests: Number(guests),
+      city,
+      registryOffice: registryOffice || null,
+      weddingFormat: data.format ?? null,
+      venueType: data.venue ?? null,
+      personalDataConsent: true,
+    });
+
     const result = await sendMaxMessage(message);
 
     console.log("BUDGET MAX STATUS:", result.status);

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sendMaxMessage } from "@/lib/max";
+import { createLead } from "@/lib/leads";
 
 type ConsultationPayload = {
   name?: string;
@@ -81,7 +82,14 @@ export async function POST(request: Request) {
     "✅ <b>Согласие на обработку персональных данных:</b> получено",
   ].join("\n");
 
-  try {
+  try {    await createLead({
+      leadType: "consultation",
+      name,
+      phone,
+      eventDate: preferredDate,
+      personalDataConsent: true,
+    });
+
     const result = await sendMaxMessage(message);
 
     console.log("CONSULTATION MAX STATUS:", result.status);
