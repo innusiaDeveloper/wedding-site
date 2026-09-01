@@ -1,7 +1,12 @@
 "use client";
 
 import Link from "next/link";
+
+import { usePathname } from "next/navigation";
+
 import { useEffect, useState } from "react";
+
+import { QuickConsultationModal } from "@/components/QuickConsultationModal";
 
 type Props = {
   logoDesktopUrl: string | null;
@@ -38,8 +43,13 @@ function NavLink({
 }
 
 export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
+  const pathname = usePathname();
+
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [consultationOpen, setConsultationOpen] = useState(false);
+
+  const isPortfolioPage = pathname === "/portfolio";
 
   useEffect(() => {
     function onResize() {
@@ -135,23 +145,44 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
             </nav>
 
             <div className="flex shrink-0 items-center gap-2">
-              <Link
-                href="/portfolio"
-                className="
-                  hidden items-center justify-center rounded-2xl
-                  bg-brand-green px-5 py-2.5
-                  font-ui text-[15px] font-medium
-                  text-brand-paper shadow-sm
-                  transition-all duration-300
-                  hover:bg-brand-hover
-                  focus:outline-none
-                  focus-visible:ring-2
-                  focus-visible:ring-brand-green/35
-                  md:inline-flex
-                "
-              >
-                Смотреть портфолио <span className="ml-2">→</span>
-              </Link>
+              {isPortfolioPage ? (
+                <button
+                  type="button"
+                  onClick={() => setConsultationOpen(true)}
+                  className="
+      hidden items-center justify-center rounded-2xl
+      bg-brand-green px-5 py-2.5
+      font-ui text-[15px] font-medium
+      text-brand-paper shadow-sm
+      transition-all duration-300
+      hover:bg-brand-hover
+      focus:outline-none
+      focus-visible:ring-2
+      focus-visible:ring-brand-green/35
+      md:inline-flex
+    "
+                >
+                  Бесплатная консультация <span className="ml-2">→</span>
+                </button>
+              ) : (
+                <Link
+                  href="/portfolio"
+                  className="
+      hidden items-center justify-center rounded-2xl
+      bg-brand-green px-5 py-2.5
+      font-ui text-[15px] font-medium
+      text-brand-paper shadow-sm
+      transition-all duration-300
+      hover:bg-brand-hover
+      focus:outline-none
+      focus-visible:ring-2
+      focus-visible:ring-brand-green/35
+      md:inline-flex
+    "
+                >
+                  Смотреть портфолио <span className="ml-2">→</span>
+                </Link>
+              )}
 
               <button
                 type="button"
@@ -220,27 +251,54 @@ export function Header({ logoDesktopUrl, logoMobileUrl }: Props) {
               </NavLink>
 
               <div className="sticky bottom-0 mt-8 bg-brand-paper pb-4 pt-3">
-                <Link
-                  href="/portfolio"
-                  onClick={() => setOpen(false)}
-                  className="
-      flex w-full items-center justify-center
-      rounded-2xl bg-brand-green
-      px-5 py-4
-      font-ui text-[16px] font-medium
-      text-brand-paper
-      shadow-md shadow-brand-green/20
-      transition-colors duration-300
-      hover:bg-brand-hover
-    "
-                >
-                  Смотреть портфолио <span className="ml-2">→</span>
-                </Link>
+                {isPortfolioPage ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      setConsultationOpen(true);
+                    }}
+                    className="
+        flex w-full items-center justify-center
+        rounded-2xl bg-brand-green
+        px-5 py-4
+        font-ui text-[16px] font-medium
+        text-brand-paper
+        shadow-md shadow-brand-green/20
+        transition-colors duration-300
+        hover:bg-brand-hover
+      "
+                  >
+                    Бесплатная консультация <span className="ml-2">→</span>
+                  </button>
+                ) : (
+                  <Link
+                    href="/portfolio"
+                    onClick={() => setOpen(false)}
+                    className="
+        flex w-full items-center justify-center
+        rounded-2xl bg-brand-green
+        px-5 py-4
+        font-ui text-[16px] font-medium
+        text-brand-paper
+        shadow-md shadow-brand-green/20
+        transition-colors duration-300
+        hover:bg-brand-hover
+      "
+                  >
+                    Смотреть портфолио <span className="ml-2">→</span>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
         </div>
       </header>
+
+      <QuickConsultationModal
+        open={consultationOpen}
+        onClose={() => setConsultationOpen(false)}
+      />
     </>
   );
 }
