@@ -20,7 +20,7 @@ type CreateLeadInput = {
 
 const DIRECTUS_INTERNAL_URL = "http://127.0.0.1:8055";
 
-const CONSENT_VERSION = "2026-07-28";
+const CONSENT_VERSION = "2026-09-13";
 
 const CONSENT_TEXT =
   "Я даю согласие на обработку персональных данных и подтверждаю, что ознакомился(-ась) с Политикой в отношении обработки персональных данных.";

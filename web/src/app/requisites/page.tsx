@@ -27,7 +27,7 @@ export default function RequisitesPage() {
             </div>
 
             <div>
-              <span className="font-medium text-brand-dark">ОГРН:</span>
+              <span className="font-medium text-brand-dark">ОГРНИП:</span>
               <br />
               322237500319194
             </div>

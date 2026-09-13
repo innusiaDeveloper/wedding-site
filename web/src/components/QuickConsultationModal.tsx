@@ -256,7 +256,7 @@ export function QuickConsultationModal({
               >
                 согласие на обработку персональных данных
               </Link>{" "}
-              и подтверждаю, что ознакомилась с{" "}
+              и подтверждаю, что ознакомился(-ась) с{" "}
               <Link
                 href="/privacy"
                 target="_blank"
