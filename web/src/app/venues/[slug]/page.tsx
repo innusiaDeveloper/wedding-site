@@ -95,7 +95,10 @@ export async function generateMetadata({
   if (!venue) {
     return {
       title: "Площадка не найдена",
-      robots: { index: false, follow: false },
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
@@ -113,21 +116,34 @@ export async function generateMetadata({
 
   const url = absoluteUrl(`/venues/${venue.slug}`);
 
+  const location = (venue.location ?? "").trim() || "Краснодар";
+
   const description =
     (venue.excerpt ?? "").trim() ||
-    "Описание площадки, условия, депозит, аренда, сервис и фотографии.";
+    `${venue.title} — свадебная площадка, ${location}. Вместимость, условия, аренда, фотографии и информация для организации свадьбы.`;
 
   return {
-    title: `${venue.title} | Площадки`,
+    title: `${venue.title} — свадебная площадка | ${location}`,
     description,
-    alternates: { canonical: url },
+
+    alternates: {
+      canonical: url,
+    },
+
     openGraph: {
       type: "article",
       url,
-      title: venue.title,
+      title: `${venue.title} — свадебная площадка | ${location}`,
       description,
       images: ogImage
-        ? [{ url: ogImage, width: 1200, height: 630 }]
+        ? [
+            {
+              url: ogImage,
+              width: 1200,
+              height: 630,
+              alt: `${venue.title} — свадебная площадка`,
+            },
+          ]
         : undefined,
     },
   };
@@ -157,6 +173,7 @@ export default async function VenuePage({
   const galleryItems =
     venue.gallery?.flatMap((g) => {
       const id = fileId(g.directus_files_id);
+
       if (!id) return [];
 
       return [
@@ -190,6 +207,7 @@ export default async function VenuePage({
     const hallGallery =
       h.gallery?.flatMap((g) => {
         const id = fileId(g.directus_files_id);
+
         if (!id) return [];
 
         return [
@@ -215,7 +233,10 @@ export default async function VenuePage({
 
   const facts: Array<{ label: string; value: string }> = [
     { label: "Вместимость", value: venue.capacity ?? "—" },
-    { label: "Выездная регистрация", value: venue.ceremony ? "Да" : "Нет" },
+    {
+      label: "Выездная регистрация",
+      value: venue.ceremony ? "Да" : "Нет",
+    },
     { label: "Время / продление", value: venue.working_hours ?? "—" },
     { label: "Номерной фонд", value: venue.rooms ?? "—" },
     {
@@ -228,7 +249,10 @@ export default async function VenuePage({
     { label: "Сервис", value: venue.service ?? "—" },
     { label: "Алкоголь", value: venue.alcohol ?? "—" },
     { label: "Локация", value: venue.location ?? "Краснодар" },
-    { label: "Формат", value: "Условия уточняются индивидуально" },
+    {
+      label: "Формат",
+      value: "Условия уточняются индивидуально",
+    },
   ];
 
   return (
@@ -262,12 +286,13 @@ export default async function VenuePage({
             <div className="relative h-[420px] sm:h-[520px] lg:h-[650px] xl:h-[720px]">
               <Image
                 src={coverUrl}
-                alt={venue.title}
+                alt={`${venue.title} — свадебная площадка`}
                 fill
                 unoptimized
                 priority
                 className="object-cover"
               />
+
               <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/25 to-transparent" />
             </div>
           ) : (
@@ -318,9 +343,9 @@ export default async function VenuePage({
 
         <section className="mx-auto mt-6 max-w-5xl rounded-[2rem] border border-brand-dark/10 bg-white p-6 shadow-[0_10px_30px_rgba(0,0,0,0.04)] sm:p-8">
           <div className="max-w-2xl">
-            <h3 className="font-display font-light text-2xl leading-[1.02] tracking-[-0.015em] text-brand-dark sm:text-3xl">
+            <h2 className="font-display font-light text-2xl leading-[1.02] tracking-[-0.015em] text-brand-dark sm:text-3xl">
               Быстрый запрос
-            </h3>
+            </h2>
 
             <p className="mt-3 font-ui text-sm leading-[1.75] text-brand-brown/80 sm:text-base">
               Хочешь узнать свободные даты и финальный расчёт под ваш формат?
@@ -336,20 +361,20 @@ export default async function VenuePage({
           <section className="mx-auto mt-10 max-w-5xl rounded-[2rem] border border-brand-dark/10 bg-white p-6 shadow-[0_10px_30px_rgba(0,0,0,0.04)] sm:p-8">
             <article
               className="
-        prose prose-lg max-w-none
-        prose-headings:font-display
-        prose-headings:font-light
-        prose-headings:text-brand-dark
-        prose-h3:mt-8
-        prose-h3:mb-4
-        prose-h3:text-2xl
-        prose-p:text-brand-brown
-        prose-p:leading-8
-        prose-ul:my-5
-        prose-li:text-brand-brown
-        prose-li:leading-8
-        prose-li:marker:text-brand-green
-      "
+                prose prose-lg max-w-none
+                prose-headings:font-display
+                prose-headings:font-light
+                prose-headings:text-brand-dark
+                prose-h3:mt-8
+                prose-h3:mb-4
+                prose-h3:text-2xl
+                prose-p:text-brand-brown
+                prose-p:leading-8
+                prose-ul:my-5
+                prose-li:text-brand-brown
+                prose-li:leading-8
+                prose-li:marker:text-brand-green
+              "
             >
               <div dangerouslySetInnerHTML={{ __html: venue.content }} />
             </article>
@@ -358,7 +383,6 @@ export default async function VenuePage({
 
         {galleryItems.length > 0 ? (
           <section className="mx-auto mt-10 max-w-5xl rounded-[2rem] border border-brand-dark/10 bg-white p-6 shadow-[0_10px_30px_rgba(0,0,0,0.04)] sm:p-8">
-            {" "}
             <VenueGallery
               title="Фотографии площадки"
               subtitle="Общая атмосфера, территория и ключевые ракурсы."
@@ -369,22 +393,23 @@ export default async function VenuePage({
 
         {hallBlocks.length > 0 ? (
           <section className="mx-auto mt-10 max-w-5xl rounded-[2rem] border border-brand-dark/10 bg-white p-6 shadow-[0_10px_30px_rgba(0,0,0,0.04)] sm:p-8">
-            {" "}
             <h2 className="font-display font-light text-3xl leading-none tracking-[-0.015em] text-brand-dark">
               {hallBlocks.length === 1 ? "Зал площадки" : "Залы площадки"}
             </h2>
+
             {hallBlocks.length > 1 ? (
               <p className="mt-2 font-ui text-sm leading-[1.7] text-brand-brown/75">
                 Выбери зал, чтобы посмотреть фото.
               </p>
             ) : null}
+
             {hallBlocks.length === 1 ? (
               <div className="mt-6 overflow-hidden rounded-3xl border border-brand-dark/10">
                 <div className="relative h-[240px] sm:h-[320px]">
                   {hallBlocks[0].coverUrl ? (
                     <Image
                       src={hallBlocks[0].coverUrl}
-                      alt={hallBlocks[0].title}
+                      alt={`${hallBlocks[0].title} — ${venue.title}`}
                       fill
                       unoptimized
                       className="object-cover"

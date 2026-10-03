@@ -11,8 +11,22 @@ import {
 } from "@/components/PortfolioConsultationCTA";
 
 export const metadata: Metadata = {
-  title: "Портфолио | ALEKSANDRA.PIROG.RU",
-  description: "Реальные проекты, атмосфера, детали и визуальные истории.",
+  title: "Портфолио свадебного организатора",
+
+  description:
+    "Портфолио свадебного организатора Александры Пирог: реальные свадьбы в Краснодаре, Сочи, Москве и других городах России. Концепции, площадки, декор и детали проектов.",
+
+  alternates: {
+    canonical: "/portfolio",
+  },
+
+  openGraph: {
+    type: "website",
+    url: "/portfolio",
+    title: "Портфолио свадебного организатора Александры Пирог",
+    description:
+      "Реальные свадьбы в Краснодаре, Сочи, Москве и других городах России: концепции, площадки, декор, детали и атмосфера проектов.",
+  },
 };
 
 type Project = {
@@ -30,39 +44,45 @@ export default async function PortfolioPage() {
 
   const projects = res.data ?? [];
 
+  const safeProjects = projects.filter(
+    (project) =>
+      typeof project.slug === "string" && project.slug.trim().length > 0,
+  );
+
   return (
     <main className="min-h-screen bg-brand-paper text-brand-dark">
       <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20 lg:py-24">
         <header className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-  <div>
-    <h1 className="font-display font-light text-4xl leading-[0.98] tracking-[-0.02em] text-brand-dark sm:text-5xl lg:text-6xl">
-      Портфолио
-    </h1>
+          <div>
+            <h1 className="font-display font-light text-4xl leading-[0.98] tracking-[-0.02em] text-brand-dark sm:text-5xl lg:text-6xl">
+              Портфолио свадебного организатора
+            </h1>
 
-    <p className="mt-4 max-w-2xl font-ui text-base leading-[1.75] text-brand-brown/85">
-      Реальные проекты, атмосфера, детали и визуальные истории.
-    </p>
-  </div>
+            <p className="mt-4 max-w-2xl font-ui text-base leading-[1.75] text-brand-brown/85">
+              Реальные свадьбы в Краснодаре, Сочи, Москве и других городах
+              России: концепции, площадки, декор, детали и атмосфера наших
+              проектов.
+            </p>
+          </div>
 
-  <div className="shrink-0">
-    <PortfolioConsultationCTA />
-  </div>
-</header>
+          <div className="shrink-0">
+            <PortfolioConsultationCTA />
+          </div>
+        </header>
 
-        {projects.length === 0 ? (
+        {safeProjects.length === 0 ? (
           <div className="rounded-[2rem] border border-brand-dark/10 bg-white p-8 text-center shadow-[0_12px_36px_rgba(0,0,0,0.06)]">
             <h2 className="font-display font-light text-3xl tracking-[-0.015em] text-brand-dark">
               Проекты скоро появятся
             </h2>
+
             <p className="mt-3 font-ui text-brand-brown/75">
               Мы готовим новые кейсы и визуальные истории.
             </p>
           </div>
         ) : (
           <div className="columns-1 gap-6 sm:columns-2 lg:columns-3">
-            {projects.map((p) => {
-              if (!p.slug) return null;
-
+            {safeProjects.map((p) => {
               const coverId =
                 typeof p.cover === "string" ? p.cover : (p.cover?.id ?? null);
 
@@ -91,7 +111,7 @@ export default async function PortfolioPage() {
                     {coverUrl ? (
                       <Image
                         src={coverUrl}
-                        alt={p.title}
+                        alt={`${p.title} — свадебный проект Александры Пирог`}
                         width={1200}
                         height={1500}
                         unoptimized
@@ -128,6 +148,7 @@ export default async function PortfolioPage() {
             })}
           </div>
         )}
+
         <PortfolioConsultationBottomCTA />
       </div>
     </main>

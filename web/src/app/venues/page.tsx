@@ -3,8 +3,19 @@ import { directusFetch } from "@/lib/directus";
 import { VenuesGallery } from "@/components/VenuesGallery";
 
 export const metadata: Metadata = {
-  title: "Площадки | ALEKSANDRA.PIROG.RU",
-  description: "Подборка площадок: условия, фото, локации.",
+  title: "Свадебные площадки Краснодара и Краснодарского края",
+  description:
+    "Свадебные площадки Краснодара и Краснодарского края: условия, вместимость, аренда, фотографии и рекомендации свадебного организатора Александры Пирог.",
+  alternates: {
+    canonical: "/venues",
+  },
+  openGraph: {
+    title: "Свадебные площадки Краснодара и Краснодарского края",
+    description:
+      "Подборка площадок для свадьбы в Краснодаре и Краснодарском крае: условия, вместимость, аренда и фотографии.",
+    url: "/venues",
+    type: "website",
+  },
 };
 
 export type VenueRow = {
@@ -28,6 +39,7 @@ export default async function VenuesPage() {
       `/items/venues?fields=id,title,slug,excerpt,location,capacity,cover.id&filter[status][_eq]=published&sort=title`,
       { next: { revalidate: 3600 } },
     );
+
     venues = res.data ?? [];
   } catch {
     venues = [];
@@ -42,11 +54,13 @@ export default async function VenuesPage() {
       <div className="mx-auto max-w-7xl px-5 py-16 sm:py-20 lg:py-24">
         <header className="mb-10">
           <h1 className="font-display font-light text-4xl leading-[0.98] tracking-[-0.02em] text-brand-dark sm:text-5xl lg:text-6xl">
-            Площадки
+            Свадебные площадки Краснодара и Краснодарского края
           </h1>
+
           <p className="mt-4 max-w-2xl font-ui text-base leading-[1.75] text-brand-brown/85">
-            Подборка площадок для свадьбы: условия, депозит, аренда и
-            фотографии.
+            Подборка площадок для свадьбы в Краснодаре и Краснодарском крае:
+            условия, вместимость, аренда, фотографии и рекомендации свадебного
+            организатора.
           </p>
         </header>
 
@@ -55,6 +69,7 @@ export default async function VenuesPage() {
             <h2 className="font-display font-light text-3xl tracking-[-0.015em] text-brand-dark">
               Площадки скоро появятся
             </h2>
+
             <p className="mt-3 font-ui text-brand-brown/75">
               Мы готовим подборку локаций и актуальные условия.
             </p>

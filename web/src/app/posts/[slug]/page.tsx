@@ -24,17 +24,18 @@ export async function generateMetadata({
     };
   }
 
-  const title = post.title ?? "Публикация";
-  const postSlug = post.slug ?? slug;
+  const title = post.title?.trim() || "Свадебный проект";
+
+  const postSlug = post.slug?.trim() || slug;
 
   const description =
     post.caption?.replace(/\s+/g, " ").trim().slice(0, 160) ||
-    "Публикация Александры Пирог";
+    `${title}. Свадебные проекты, идеи и вдохновение от свадебного организатора Александры Пирог.`;
 
   const url = absoluteUrl(`/posts/${postSlug}`);
 
   return {
-    title: `${title} | Публикации`,
+    title,
     description,
 
     alternates: {
@@ -46,6 +47,8 @@ export async function generateMetadata({
       title,
       description,
       url,
+      siteName: "Александра Пирог",
+      locale: "ru_RU",
     },
 
     twitter: {

@@ -34,6 +34,7 @@ function normalizeSlug(value: string) {
 
 function getCoverId(cover: Project["cover"]): string | null {
   if (!cover) return null;
+
   return typeof cover === "string" ? cover : (cover.id ?? null);
 }
 
@@ -80,12 +81,16 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+
   const project = await getProjectBySlug(slug);
 
   if (!project) {
     return {
       title: "Проект не найден",
-      robots: { index: false, follow: false },
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
@@ -101,22 +106,38 @@ export async function generateMetadata({
     : undefined;
 
   const url = absoluteUrl(`/portfolio/${project.slug}`);
+
   const description =
-    (project.excerpt ?? "").trim() || "Фотографии, детали и описание проекта.";
+    (project.excerpt ?? "").trim() ||
+    `${project.title} — свадебный проект Александры Пирог. Концепция, атмосфера, детали и фотографии свадьбы.`;
 
   return {
-    title: `${project.title} | Портфолио`,
+    title: project.title,
     description,
-    alternates: { canonical: url },
+
+    alternates: {
+      canonical: url,
+    },
+
     openGraph: {
       type: "article",
       url,
-      title: project.title,
+      title: `${project.title} — свадебный проект`,
       description,
+      siteName: "Александра Пирог",
+      locale: "ru_RU",
       images: ogImage
-        ? [{ url: ogImage, width: 1200, height: 630 }]
+        ? [
+            {
+              url: ogImage,
+              width: 1200,
+              height: 630,
+              alt: `${project.title} — свадебный проект Александры Пирог`,
+            },
+          ]
         : undefined,
     },
+
     twitter: {
       card: "summary_large_image",
       title: project.title,
@@ -132,9 +153,12 @@ export default async function ProjectPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
   const project = await getProjectBySlug(slug);
 
-  if (!project) return notFound();
+  if (!project) {
+    return notFound();
+  }
 
   const coverId = getCoverId(project.cover);
 
@@ -161,6 +185,7 @@ export default async function ProjectPage({
 
         return {
           id: file.id,
+
           src: isVideo
             ? directusAssetUrl(file.id)
             : directusAssetUrl(file.id, {
@@ -168,8 +193,13 @@ export default async function ProjectPage({
                 quality: 76,
                 fit: "cover",
               }),
-          alt: file.title ?? project.title,
+
+          alt:
+            file.title?.trim() ||
+            `${project.title} — свадебный проект Александры Пирог`,
+
           type: isVideo ? "video" : "image",
+
           poster: null,
         };
       }) ?? [];
@@ -198,7 +228,7 @@ export default async function ProjectPage({
             <div className="relative h-[400px] sm:h-[520px] lg:h-[660px]">
               <Image
                 src={coverUrl}
-                alt={project.title}
+                alt={`${project.title} — свадебный проект Александры Пирог`}
                 fill
                 unoptimized
                 priority
@@ -230,25 +260,25 @@ export default async function ProjectPage({
           <section className="mt-10 rounded-3xl border border-brand-dark/10 bg-white p-8 shadow-[0_10px_30px_rgba(0,0,0,0.04)]">
             <article
               className="
-        prose prose-lg max-w-none
-        prose-headings:font-display
-        prose-headings:font-light
-        prose-headings:text-brand-dark
-        prose-h2:mt-10
-        prose-h2:mb-5
-        prose-h2:text-3xl
-        prose-h3:mt-8
-        prose-h3:mb-4
-        prose-h3:text-2xl
-        prose-p:text-brand-brown
-        prose-p:leading-8
-        prose-ul:my-5
-        prose-li:text-brand-brown
-        prose-li:leading-8
-        prose-li:marker:text-brand-green
-        prose-strong:text-brand-dark
-        prose-a:text-brand-deep
-      "
+                prose prose-lg max-w-none
+                prose-headings:font-display
+                prose-headings:font-light
+                prose-headings:text-brand-dark
+                prose-h2:mt-10
+                prose-h2:mb-5
+                prose-h2:text-3xl
+                prose-h3:mt-8
+                prose-h3:mb-4
+                prose-h3:text-2xl
+                prose-p:text-brand-brown
+                prose-p:leading-8
+                prose-ul:my-5
+                prose-li:text-brand-brown
+                prose-li:leading-8
+                prose-li:marker:text-brand-green
+                prose-strong:text-brand-dark
+                prose-a:text-brand-deep
+              "
             >
               <div dangerouslySetInnerHTML={{ __html: project.content }} />
             </article>
