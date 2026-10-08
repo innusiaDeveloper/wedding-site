@@ -30,7 +30,7 @@ export function Hero({
 
   return (
     <section className="relative isolate overflow-hidden bg-brand-paper">
-      <div className="mx-auto max-w-6xl px-5 pt-8 sm:pt-10 lg:pt-12">
+      <div className="mx-auto max-w-7xl px-5 pt-8 sm:pt-10 lg:pt-12">
         <div className="relative grid gap-8 lg:grid-cols-2 lg:items-center">
           <div className="pointer-events-none absolute inset-0 z-0 hidden lg:block">
             <div className="slow-shimmer absolute left-[34%] -top-24 bottom-[-72px] w-[980px] rounded-[6.5rem] bg-gradient-to-br from-black/[0.04] via-black/[0.02] to-transparent blur-2xl opacity-90" />

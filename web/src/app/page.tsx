@@ -5,6 +5,8 @@ import { Hero } from "@/components/Hero";
 import { AwardsSection } from "@/components/AwardsSection";
 import { HomeTiles } from "@/components/HomeTiles";
 import { BudgetCalculator } from "@/components/BudgetCalculator";
+import { SpecialOffers } from "@/components/SpecialOffers";
+import { SpecialOfferPopup } from "@/components/SpecialOfferPopup";
 
 import { directusAssetUrl } from "@/lib/seo";
 import { getSiteSettings } from "@/lib/siteSettings";
@@ -52,6 +54,7 @@ async function getPortfolioTileFallback(): Promise<string | null> {
     );
 
     const project = res.data?.[0];
+
     const coverId =
       typeof project?.cover === "string"
         ? project.cover
@@ -78,6 +81,7 @@ async function getVenuesTileFallback(): Promise<string | null> {
     );
 
     const venue = res.data?.[0];
+
     const coverId =
       typeof venue?.cover === "string"
         ? venue.cover
@@ -99,6 +103,7 @@ async function getVenuesTileFallback(): Promise<string | null> {
 export default async function HomePage() {
   const settings = await getSiteSettings();
   const posts = await getPostsWithMedia();
+
   const latestPosts = posts
     .filter(
       (post) => typeof post.slug === "string" && post.slug.trim().length > 0,
@@ -132,6 +137,8 @@ export default async function HomePage() {
         secondaryLabel="Обо мне"
       />
 
+      <SpecialOffers />
+
       <AwardsSection />
 
       <section className="mx-auto max-w-7xl px-5 py-16 sm:py-20 lg:py-24">
@@ -156,99 +163,82 @@ export default async function HomePage() {
               <div
                 key={num}
                 className="
-        group relative overflow-hidden
-        rounded-[2rem]
-        border border-brand-dark/10
-
-        bg-gradient-to-br
-        from-white
-        via-brand-paper/80
-        to-[#f8efec]
-
-        p-6 text-center
-        transition-all duration-500
-
-        hover:-translate-y-2
-        hover:border-[#c99890]/40
-        hover:shadow-[0_25px_80px_rgba(190,110,95,0.18)]
-
-        sm:p-8
-      "
+                  group relative overflow-hidden
+                  rounded-[2rem]
+                  border border-brand-dark/10
+                  bg-gradient-to-br
+                  from-white
+                  via-brand-paper/80
+                  to-[#f8efec]
+                  p-6 text-center
+                  transition-all duration-500
+                  hover:-translate-y-2
+                  hover:border-[#c99890]/40
+                  hover:shadow-[0_25px_80px_rgba(190,110,95,0.18)]
+                  sm:p-8
+                "
               >
-                {/* декоративное свечение */}
                 <div
                   className="
-          absolute -right-12 -top-12
-          h-32 w-32 rounded-full
-          bg-[#d9a198]/20 blur-3xl
-
-          opacity-0
-          transition-all duration-500
-          group-hover:opacity-100
-        "
+                    absolute -right-12 -top-12
+                    h-32 w-32 rounded-full
+                    bg-[#d9a198]/20 blur-3xl
+                    opacity-0
+                    transition-all duration-500
+                    group-hover:opacity-100
+                  "
                 />
 
                 <div
                   className="
-          absolute -left-10 -bottom-10
-          h-24 w-24 rounded-full
-          bg-[#c58c83]/10 blur-3xl
-
-          opacity-0
-          transition-all duration-500
-          group-hover:opacity-100
-        "
+                    absolute -bottom-10 -left-10
+                    h-24 w-24 rounded-full
+                    bg-[#c58c83]/10 blur-3xl
+                    opacity-0
+                    transition-all duration-500
+                    group-hover:opacity-100
+                  "
                 />
 
                 <div
                   className="
-          relative z-10
-
-          font-display font-light
-          text-3xl leading-none
-          tracking-[-0.02em]
-
-          text-brand-dark
-
-          transition-all duration-500
-          group-hover:scale-105
-          group-hover:text-[#b86f63]
-
-          sm:text-4xl
-        "
+                    relative z-10
+                    font-display font-light
+                    text-3xl leading-none
+                    tracking-[-0.02em]
+                    text-brand-dark
+                    transition-all duration-500
+                    group-hover:scale-105
+                    group-hover:text-[#b86f63]
+                    sm:text-4xl
+                  "
                 >
                   {num}
                 </div>
 
                 <div
                   className="
-          mx-auto mt-4 h-px w-10
-
-          bg-gradient-to-r
-          from-transparent
-          via-[#c48b81]
-          to-transparent
-
-          transition-all duration-500
-          group-hover:w-16
-        "
+                    mx-auto mt-4 h-px w-10
+                    bg-gradient-to-r
+                    from-transparent
+                    via-[#c48b81]
+                    to-transparent
+                    transition-all duration-500
+                    group-hover:w-16
+                  "
                 />
 
                 <p
                   className="
-          relative z-10
-          mt-4
-
-          font-ui text-sm
-          leading-[1.7]
-
-          text-brand-brown/78
-
-          transition-colors duration-300
-          group-hover:text-brand-brown
-
-          sm:text-base
-        "
+                    relative z-10
+                    mt-4
+                    font-ui text-sm
+                    leading-[1.7]
+                    text-brand-brown/78
+                    transition-colors duration-300
+                    group-hover:text-brand-brown
+                    sm:text-base
+                  "
                 >
                   {text}
                 </p>
@@ -274,7 +264,7 @@ export default async function HomePage() {
 
             <Link
               href="/posts"
-              className="hidden sm:inline-flex items-center justify-center rounded-2xl border border-brand-dark/20 bg-brand-paper px-6 py-3 font-ui text-sm font-medium text-brand-dark transition hover:border-brand-green/40 hover:text-brand-deep"
+              className="hidden items-center justify-center rounded-2xl border border-brand-dark/20 bg-brand-paper px-6 py-3 font-ui text-sm font-medium text-brand-dark transition hover:border-brand-green/40 hover:text-brand-deep sm:inline-flex"
             >
               Смотреть все
             </Link>
@@ -307,13 +297,15 @@ export default async function HomePage() {
                   key={post.id}
                   href={`/posts/${post.slug}`}
                   className="
-        group block overflow-hidden rounded-[2.5rem]
-        border border-brand-dark/10 bg-white
-        shadow-[0_20px_60px_rgba(0,0,0,0.06)]
-        transition-all duration-500
-        hover:-translate-y-1
-        hover:shadow-[0_28px_90px_rgba(0,0,0,0.12)]
-      "
+                    group block overflow-hidden
+                    rounded-[2.5rem]
+                    border border-brand-dark/10
+                    bg-white
+                    shadow-[0_20px_60px_rgba(0,0,0,0.06)]
+                    transition-all duration-500
+                    hover:-translate-y-1
+                    hover:shadow-[0_28px_90px_rgba(0,0,0,0.12)]
+                  "
                 >
                   <div className="relative aspect-[4/5] overflow-hidden bg-brand-olive/10">
                     {imageUrl ? (
@@ -328,9 +320,10 @@ export default async function HomePage() {
                     ) : (
                       <div className="flex h-full items-end p-6">
                         <div className="w-full rounded-2xl bg-black/55 p-4 text-white backdrop-blur">
-                          <div className="font-display font-light text-2xl tracking-[-0.015em]">
+                          <div className="font-display text-2xl font-light tracking-[-0.015em]">
                             {post.title ?? "Пост"}
                           </div>
+
                           <div className="mt-2 font-ui text-sm text-white/85">
                             Открыть публикацию
                           </div>
@@ -347,7 +340,7 @@ export default async function HomePage() {
                   </div>
 
                   <div className="p-5">
-                    <div className="font-display font-light text-2xl leading-[1.05] tracking-[-0.015em] text-brand-dark">
+                    <div className="font-display text-2xl font-light leading-[1.05] tracking-[-0.015em] text-brand-dark">
                       {post.title ?? ""}
                     </div>
 
@@ -394,16 +387,14 @@ export default async function HomePage() {
               </h2>
 
               <p className="mt-4 font-ui text-base leading-[1.8] text-brand-brown/90">
-                <p className="mt-4 font-ui text-base leading-[1.8] text-brand-brown/90">
-                  Меня зовут Александра Пирог, я свадебный организатор, режиссер
-                  и руководитель команды креативного свадебного агентства в
-                  Краснодаре. Финалист престижной премии Wedding Awards South
-                  21, 22, 24, 25. Автор курса «Организатор со смыслом», в рамках
-                  которого выпустила более 30 учениц. Я и моя команда создаем
-                  эстетичные и креативные свадьбы, наполненные смыслом и
-                  режиссурой, с 2017 года. На моем счету более 700
-                  организованных проектов под ключ в Краснодаре, Сочи и Москве.
-                </p>
+                Меня зовут Александра Пирог, я свадебный организатор, режиссер и
+                руководитель команды креативного свадебного агентства в
+                Краснодаре. Финалист престижной премии Wedding Awards South 21,
+                22, 24, 25. Автор курса «Организатор со смыслом», в рамках
+                которого выпустила более 30 учениц. Я и моя команда создаем
+                эстетичные и креативные свадьбы, наполненные смыслом и
+                режиссурой, с 2017 года. На моем счету более 700 организованных
+                проектов под ключ в Краснодаре, Сочи и Москве.
               </p>
 
               <div className="mt-6 h-px w-16 bg-brand-green/30" />
@@ -426,7 +417,7 @@ export default async function HomePage() {
             </div>
 
             <div className="rounded-[2rem] border border-brand-dark/10 bg-white p-6 sm:p-8">
-              <h3 className="font-display font-light text-2xl leading-[1.02] tracking-[-0.015em] text-brand-dark sm:text-3xl">
+              <h3 className="font-display text-2xl font-light leading-[1.02] tracking-[-0.015em] text-brand-dark sm:text-3xl">
                 Мой подход
               </h3>
 
@@ -450,6 +441,7 @@ export default async function HomePage() {
                     <div className="font-ui text-[11px] uppercase tracking-[0.14em] text-brand-brown/45">
                       {t}
                     </div>
+
                     <div className="mt-2 font-ui text-sm leading-[1.7] text-brand-brown/88">
                       {d}
                     </div>
@@ -469,6 +461,8 @@ export default async function HomePage() {
           <BudgetCalculator />
         </div>
       </section>
+
+      <SpecialOfferPopup />
     </main>
   );
 }
