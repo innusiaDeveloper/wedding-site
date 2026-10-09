@@ -55,7 +55,7 @@ export function SpecialOffers() {
   }, []);
 
   const visibleOffers = offers.filter(
-    (offer) => offer.number !== "03" || octoberOfferActive,
+    (offer) => offer.number === "04" || octoberOfferActive,
   );
 
   return (

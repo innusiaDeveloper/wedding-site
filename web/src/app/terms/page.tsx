@@ -20,7 +20,7 @@ export default function TermsPage() {
       <div className="mx-auto max-w-4xl px-5 py-16 sm:py-20">
         <header>
           <p className="font-ui text-xs uppercase tracking-[0.16em] text-brand-brown/55">
-            Редакция от 13 сентября 2026 года
+            Редакция от 9 октября 2026 года
           </p>
 
           <h1 className="mt-3 font-display text-4xl leading-[1.02] sm:text-5xl">

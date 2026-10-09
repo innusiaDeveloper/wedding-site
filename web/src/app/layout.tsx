@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Manrope } from "next/font/google";
+import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 
 import { LogoSpinOnce } from "@/components/LogoSpinOnce";
 import { Header } from "@/components/Header";
@@ -98,6 +99,7 @@ export default async function RootLayout({
         {children}
         {modal}
         <Footer logoUrl={logoDesktopUrl} />
+        <CookieConsentBanner />
       </body>
     </html>
   );
