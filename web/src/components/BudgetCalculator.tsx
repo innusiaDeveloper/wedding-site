@@ -106,6 +106,19 @@ export function BudgetCalculator({ onSuccess }: Props) {
         throw new Error("Не удалось отправить заявку");
       }
 
+      // Яндекс.Метрика: успешная отправка расчёта бюджета
+      try {
+        const ym = (
+          window as Window & {
+            ym?: (id: number, method: string, goal: string) => void;
+          }
+        ).ym;
+
+        ym?.(113576139, "reachGoal", "budget_success");
+      } catch {
+        // Ошибка аналитики не должна влиять на отправку заявки
+      }
+
       setState(initial);
       setPersonalDataConsent(false);
       setStatus("sent");

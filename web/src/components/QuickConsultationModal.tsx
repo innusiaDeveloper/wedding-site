@@ -104,9 +104,21 @@ export function QuickConsultationModal({
       });
 
       const result = await response.json().catch(() => null);
-
       if (!response.ok || !result?.ok) {
         throw new Error("Не удалось отправить заявку");
+      }
+
+      // Отправляем цель в Яндекс.Метрику только после успешной заявки
+      try {
+        const ym = (
+          window as Window & {
+            ym?: (id: number, method: string, goal: string) => void;
+          }
+        ).ym;
+
+        ym?.(113576139, "reachGoal", "consultation_success");
+      } catch {
+        // Ошибка Метрики не должна влиять на отправку заявки
       }
 
       setState(initial);
